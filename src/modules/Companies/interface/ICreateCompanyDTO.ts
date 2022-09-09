@@ -1,10 +1,12 @@
-import { Types } from "mongoose";
+import ICreateUnitDTO from "../../Unities/interface/ICreateUnitDTO";
+import ICreateUserDTO from "../../Users/interface/ICreateUserDTO";
 
 export default interface ICreateCompanyDTO{
-    _id: Types.ObjectId,
-    name: string,
-    owner: string,
+    companyName: string,
+    companyOwner: string,
     area: string,
     country: string,
-    cnpj: number,
+    cnpj: string,
+    unities: [ICreateUnitDTO]
+    users: [ICreateUserDTO]
 }

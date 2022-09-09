@@ -1,8 +1,8 @@
 export default interface ICreateAssetDTO{
-    name: string,
+    assetName: string,
     description: string,
     model: string,
-    owner: string,
+    assetOwner: string,
     status: string,
     healthLevel: number,
 }
