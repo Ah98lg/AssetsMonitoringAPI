@@ -28,51 +28,57 @@ class UnitiesController {
     return res.json(newUnity);
   }
 
-  // Read
-  async getAll(req: Request, res: Response): Promise<Response> {
-    const companies = await Unity.find({});
-
-    return res.json(companies);
-  }
-
-  // Read by Id
-  public async getUnityById(req: Request, res: Response): Promise<Response> {
-    const { id } = req.params;
-
-    const company = await Unity.findById(id);
-
-    return res.json(company);
-  }
-
   // Update
-  /* async updateUnity(req: Request, res: Response): Promise<Response> {
-    const { id } = req.params;
-    const { companyName, companyOwner, area, country, cnpj } = req.body;
+  async updateUnity(req: Request, res: Response): Promise<Response> {
+    const { company_id, unity_id } = req.params;
+    const { unityName, state, city } = req.body;
 
-    const company = await Unity.findById(id);
+    const unity = await Unity.findById(unity_id);
 
-    const companyUpdates = {
-      companyName: companyName ?? company?.companyName,
-      companyOwner: companyOwner ?? company?.companyOwner,
-      area: area ?? company?.area,
-      country: country ?? company?.country,
-      cnpj: cnpj ?? company?.cnpj,
+    const unityUpdate: IUnity = {
+      unityName: unityName ?? unity?.unityName,
+      city: city ?? unity?.city,
+      state: state ?? unity?.state,
     };
 
-    const updatedCompany = await Unity.findByIdAndUpdate(id, companyUpdates, {
-      new: true,
-    });
+    await Unity.findByIdAndUpdate(unity_id, unityUpdate);
 
-    return res.json(updatedCompany);
+    const updatedCompanyUnity = await Company.findOneAndUpdate(
+      { _id: company_id, "unities._id": unity_id },
+      {
+        $set: {
+          "unities.$": unityUpdate,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    return res.json(updatedCompanyUnity);
   }
- */
+
   // Delete
   async deleteUnity(req: Request, res: Response): Promise<Response> {
-    const { id } = req.params;
+    const { company_id, unity_id } = req.params;
 
-    await Unity.findByIdAndDelete(id);
+    await Unity.findByIdAndDelete(unity_id);
 
-    return res.json({ message: "Company deleted" });
+    await Company.findOneAndUpdate(
+      { _id: company_id },
+      {
+        $pull: {
+          unities: { _id: unity_id },
+        },
+      },
+      (err: any, data: any) => {
+        if (err) {
+          throw new Error("Couldn't delete");
+        }
+      }
+    ).clone();
+
+    return res.json({ message: "Unity deleted" });
   }
 }
 

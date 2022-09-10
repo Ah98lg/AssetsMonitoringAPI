@@ -1,8 +1,10 @@
-import { Schema } from "mongoose"
-import ICreateUserDTO from "../interface/ICreateUserDTO"
+import mongoose, { Schema } from "mongoose";
+import ICreateUserDTO from "../interface/ICreateUserDTO";
 
 export const userSchema = new Schema<ICreateUserDTO>({
-    userName: {type: String, required: true},
-    age: {type: Number, required: true},
-    role: {type: String, required: true},
-})
+  userName: { type: String, required: true },
+  age: { type: Number, required: true },
+  role: { type: String, required: true },
+});
+
+export const User = mongoose.model("User", userSchema);
