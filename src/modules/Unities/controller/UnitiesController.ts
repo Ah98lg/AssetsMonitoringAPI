@@ -63,10 +63,12 @@ class UnitiesController {
     const { company_id, unity_id } = req.params;
 
     await Unity.findByIdAndDelete(unity_id);
+    const company = await Company.findById(company_id);
 
     await Company.findOneAndUpdate(
       { _id: company_id },
       {
+        ...company,
         $pull: {
           unities: { _id: unity_id },
         },

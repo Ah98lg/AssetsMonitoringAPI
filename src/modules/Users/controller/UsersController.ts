@@ -62,10 +62,12 @@ class UsersController {
     const { company_id, user_id } = req.params;
 
     await User.findByIdAndDelete(user_id);
+    const company = await Company.findById(company_id);
 
     await Company.findOneAndUpdate(
       { _id: company_id },
       {
+        ...company,
         $pull: {
           users: { _id: user_id },
         },
