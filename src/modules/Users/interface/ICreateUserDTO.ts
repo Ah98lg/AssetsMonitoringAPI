@@ -1,5 +1,5 @@
-export default interface ICreateUserDTO{
-    userName: string,
-    age: number,
-    role: string,
+export default interface ICreateUserDTO {
+  userName: string;
+  age: number;
+  role: string;
 }
