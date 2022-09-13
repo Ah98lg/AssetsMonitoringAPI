@@ -28,6 +28,13 @@ class UnitiesController {
     return res.json(newUnity);
   }
 
+  // Read
+  async getAll(req: Request, res: Response): Promise<Response> {
+    const unities = await Unity.find({});
+
+    return res.json(unities);
+  }
+
   // Update
   async updateUnity(req: Request, res: Response): Promise<Response> {
     const { company_id, unity_id } = req.params;

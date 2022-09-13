@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { Company } from "../../Companies/models/Company";
 import { Asset } from "../models/Asset";
 import { Unity } from "../../Unities/models/Unity";
+import { Image } from "../../../configs/uploads";
 
 var fs = require("fs");
 var path = require("path");
@@ -41,6 +42,7 @@ class AssetsController {
     };
 
     await Asset.create(newAsset);
+    await Image.create(image);
 
     await Company.findOneAndUpdate(
       { _id: company_id, "unities._id": unity_id },
@@ -57,7 +59,29 @@ class AssetsController {
       }
     );
 
+    await Unity.findOneAndUpdate(
+      { _id: unity_id },
+      {
+        $push: {
+          assets: {
+            assetName: newAsset.assetName,
+            description: newAsset.description,
+            model: newAsset.model,
+            assetOwner: newAsset.assetOwner,
+            image: obj,
+          },
+        },
+      }
+    );
+
     return res.json(newAsset);
+  }
+
+  // Read
+  async getAll(req: Request, res: Response): Promise<Response> {
+    const assets = await Asset.find({});
+
+    return res.json(assets);
   }
 
   // Update
@@ -92,6 +116,18 @@ class AssetsController {
       {
         $set: {
           "unities.$.assets.$": assetUpdate,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    await Unity.findOneAndUpdate(
+      { _id: unity_id, "assets._id": asset_id },
+      {
+        $set: {
+          "assets.$": assetUpdate,
         },
       },
       {

@@ -27,6 +27,13 @@ class UsersController {
     return res.json(newUser);
   }
 
+  // Read
+  async getAll(req: Request, res: Response): Promise<Response> {
+    const users = await User.find({});
+
+    return res.json(users);
+  }
+
   // Update
   async updateUser(req: Request, res: Response): Promise<Response> {
     const { company_id, user_id } = req.params;
