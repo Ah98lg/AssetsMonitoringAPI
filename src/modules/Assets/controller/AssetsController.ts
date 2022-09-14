@@ -14,7 +14,7 @@ interface IAsset {
   assetOwner: string;
   status: "Running" | "Alerting" | "Stopped";
   healthLevel: number;
-  image: IUploadImageDTO;
+  image?: IUploadImageDTO;
 }
 
 class AssetsController {
@@ -29,20 +29,20 @@ class AssetsController {
       description,
       model,
       assetOwner,
-      image,
+      // image,
     };
 
-    var obj = {
-      data: fs.readFileSync(
-        path.join(
-          __dirname + "../../../../../tmp/uploads/" + req.file?.filename
-        )
-      ),
-      contentType: "image/png",
-    };
+    // var obj = {
+    //   data: fs.readFileSync(
+    //     path.join(
+    //       __dirname + "../../../../../tmp/uploads/" + req.file?.filename
+    //     )
+    //   ),
+    //   contentType: "image/png",
+    // };
 
     await Asset.create(newAsset);
-    await Image.create(image);
+    // await Image.create(image);
 
     await Company.findOneAndUpdate(
       { _id: company_id, "unities._id": unity_id },
@@ -53,7 +53,7 @@ class AssetsController {
             description: newAsset.description,
             model: newAsset.model,
             assetOwner: newAsset.assetOwner,
-            image: obj,
+            // image: obj,
           },
         },
       }
@@ -68,7 +68,7 @@ class AssetsController {
             description: newAsset.description,
             model: newAsset.model,
             assetOwner: newAsset.assetOwner,
-            image: obj,
+            // image: obj,
           },
         },
       }
@@ -92,7 +92,7 @@ class AssetsController {
       description,
       model,
       assetOwner,
-      image,
+      // image,
       status,
       healthLevel,
     } = req.body;
@@ -104,7 +104,7 @@ class AssetsController {
       description: description ?? asset?.description,
       model: model ?? asset?.model,
       assetOwner: assetOwner ?? asset?.assetOwner,
-      image: image ?? asset?.image,
+      // image: image ?? asset?.image,
       status: status ?? asset?.status,
       healthLevel: healthLevel ?? asset?.healthLevel,
     };
@@ -150,7 +150,7 @@ class AssetsController {
       {
         "unities.$": {
           ...unity,
-          $push: {
+          $pull: {
             assets: { _id: asset_id },
           },
         },
