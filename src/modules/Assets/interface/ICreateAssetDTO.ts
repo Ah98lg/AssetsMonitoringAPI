@@ -1,5 +1,3 @@
-import IUploadImageDTO from "../../../configs/uploads";
-
 export default interface ICreateAssetDTO {
   assetName: string;
   description: string;
@@ -7,5 +5,5 @@ export default interface ICreateAssetDTO {
   assetOwner: string;
   status: "Running" | "Alerting" | "Stopped";
   healthLevel: number;
-  image: IUploadImageDTO;
+  // image: Buffer;
 }

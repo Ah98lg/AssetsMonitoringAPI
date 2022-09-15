@@ -1,12 +1,7 @@
-import IUploadImageDTO from "../../../configs/uploads";
 import { Request, Response } from "express";
 import { Company } from "../../Companies/models/Company";
 import { Asset } from "../models/Asset";
 import { Unity } from "../../Unities/models/Unity";
-import { Image } from "../../../configs/uploads";
-
-var fs = require("fs");
-var path = require("path");
 interface IAsset {
   assetName: string;
   description: string;
@@ -14,7 +9,7 @@ interface IAsset {
   assetOwner: string;
   status: "Running" | "Alerting" | "Stopped";
   healthLevel: number;
-  image?: IUploadImageDTO;
+  // image: File;
 }
 
 class AssetsController {
@@ -22,7 +17,8 @@ class AssetsController {
   async registerNewAsset(req: Request, res: Response): Promise<Response> {
     const { company_id, unity_id } = req.params;
 
-    const { assetName, description, model, assetOwner, image } = req.body;
+    const { assetName, description, model, assetOwner } = req.body;
+    // const image = req.file?.path;
 
     const newAsset = {
       assetName,
@@ -32,17 +28,7 @@ class AssetsController {
       // image,
     };
 
-    // var obj = {
-    //   data: fs.readFileSync(
-    //     path.join(
-    //       __dirname + "../../../../../tmp/uploads/" + req.file?.filename
-    //     )
-    //   ),
-    //   contentType: "image/png",
-    // };
-
     await Asset.create(newAsset);
-    // await Image.create(image);
 
     await Company.findOneAndUpdate(
       { _id: company_id, "unities._id": unity_id },
@@ -79,9 +65,13 @@ class AssetsController {
 
   // Read
   async getAll(req: Request, res: Response): Promise<Response> {
-    const assets = await Asset.find({});
+    const companies = await Company.find({});
 
-    return res.json(assets);
+    const unities = companies.map((company) => company.unities);
+
+    const assets = unities[0]?.map((unity) => unity.assets);
+
+    return res.json(assets ?? []);
   }
 
   // Update
@@ -115,7 +105,7 @@ class AssetsController {
       { _id: company_id, "unities._id": unity_id, "assets._id": asset_id },
       {
         $set: {
-          "unities.$.assets.$": assetUpdate,
+          "unities.$.assets": assetUpdate,
         },
       },
       {
@@ -142,25 +132,47 @@ class AssetsController {
   async deleteAsset(req: Request, res: Response): Promise<Response> {
     const { company_id, unity_id, asset_id } = req.params;
 
-    await Asset.findByIdAndDelete(asset_id);
-    const unity = await Unity.findById(unity_id);
+    // const unity = await Company.findOne(
+    //   { _id: company_id },
+    //   {
+    //     unities: { _id: unity_id },
+    //   }
+    // );
 
-    await Company.findOneAndUpdate(
+    // await Company.findOneAndUpdate(
+    //   { "unities._id": unity_id },
+    //   {
+    //     unities: {
+    //       ...unity,
+    //       $pull: {
+    //         assets: { _id: asset_id },
+    //       },
+    //     },
+    //   },
+    //   (err: any, data: any) => {
+    //     if (err) {
+    //       throw new Error("Couldn't delete");
+    //     }
+    //   }
+    // ).clone();
+
+    await Company.findByIdAndUpdate(
       { _id: company_id, "unities._id": unity_id },
       {
-        "unities.$": {
-          ...unity,
-          $pull: {
-            assets: { _id: asset_id },
+        $pull: {
+          "unities.$.assets": {
+            _id: asset_id,
           },
         },
       },
       (err: any, data: any) => {
         if (err) {
-          throw new Error("Couldn't delete");
+          throw new Error(err);
         }
       }
     ).clone();
+
+    await Asset.findByIdAndDelete(asset_id);
 
     return res.json({ message: "Asset deleted" });
   }

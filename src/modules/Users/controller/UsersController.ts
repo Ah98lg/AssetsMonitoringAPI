@@ -14,11 +14,13 @@ class UsersController {
 
     const { userName, age, role } = req.body;
 
-    const newUser = await User.create({
+    const newUser = {
       userName,
       age,
       role,
-    });
+    };
+
+    await User.create(newUser);
 
     await Company.findById(id).then((company) => {
       company?.users.push(newUser), company?.save();
@@ -29,9 +31,11 @@ class UsersController {
 
   // Read
   async getAll(req: Request, res: Response): Promise<Response> {
-    const users = await User.find({});
+    const companies = await Company.find({});
 
-    return res.json(users);
+    const users = companies.map((company) => company.users);
+
+    return res.json(users[0]);
   }
 
   // Update
@@ -46,8 +50,6 @@ class UsersController {
       role: role ?? user?.role,
       age: age ?? user?.age,
     };
-
-    await User.findByIdAndUpdate(user_id, userUpdate);
 
     const updatedCompanyUser = await Company.findOneAndUpdate(
       { _id: company_id, "users._id": user_id },

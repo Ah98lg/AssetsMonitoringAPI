@@ -14,12 +14,14 @@ class UnitiesController {
 
     const { unityName, city, state, assets } = req.body;
 
-    const newUnity = await Unity.create({
+    const newUnity = {
       unityName,
       city,
       state,
       assets,
-    });
+    };
+
+    await Unity.create(newUnity);
 
     await Company.findById(id).then((company) => {
       company?.unities.push(newUnity), company?.save();
@@ -30,9 +32,11 @@ class UnitiesController {
 
   // Read
   async getAll(req: Request, res: Response): Promise<Response> {
-    const unities = await Unity.find({});
+    const companies = await Company.find({});
 
-    return res.json(unities);
+    const unities = companies.map((company) => company.unities);
+
+    return res.json(unities[0]);
   }
 
   // Update
@@ -47,8 +51,6 @@ class UnitiesController {
       city: city ?? unity?.city,
       state: state ?? unity?.state,
     };
-
-    await Unity.findByIdAndUpdate(unity_id, unityUpdate);
 
     const updatedCompanyUnity = await Company.findOneAndUpdate(
       { _id: company_id, "unities._id": unity_id },
