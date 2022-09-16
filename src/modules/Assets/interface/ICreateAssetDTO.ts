@@ -1,4 +1,5 @@
 export default interface ICreateAssetDTO {
+  _id: string;
   assetName: string;
   description: string;
   model: string;

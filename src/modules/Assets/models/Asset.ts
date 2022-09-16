@@ -12,7 +12,6 @@ export const assetsSchema = new Schema<ICreateAssetDTO>({
     min: 0,
     max: 100,
     required: true,
-    default: Math.floor(Math.random() * 100),
   },
   // image: { type: Buffer, required: true },
 });

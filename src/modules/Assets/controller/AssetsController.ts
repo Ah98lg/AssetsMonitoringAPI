@@ -25,6 +25,7 @@ class AssetsController {
       description,
       model,
       assetOwner,
+      healthLevel: Math.floor(Math.random() * 100),
       // image,
     };
 
@@ -39,6 +40,7 @@ class AssetsController {
             description: newAsset.description,
             model: newAsset.model,
             assetOwner: newAsset.assetOwner,
+            healthLevel: newAsset.healthLevel,
             // image: obj,
           },
         },
@@ -132,31 +134,7 @@ class AssetsController {
   async deleteAsset(req: Request, res: Response): Promise<Response> {
     const { company_id, unity_id, asset_id } = req.params;
 
-    // const unity = await Company.findOne(
-    //   { _id: company_id },
-    //   {
-    //     unities: { _id: unity_id },
-    //   }
-    // );
-
-    // await Company.findOneAndUpdate(
-    //   { "unities._id": unity_id },
-    //   {
-    //     unities: {
-    //       ...unity,
-    //       $pull: {
-    //         assets: { _id: asset_id },
-    //       },
-    //     },
-    //   },
-    //   (err: any, data: any) => {
-    //     if (err) {
-    //       throw new Error("Couldn't delete");
-    //     }
-    //   }
-    // ).clone();
-
-    await Company.findByIdAndUpdate(
+    await Company.findOneAndUpdate(
       { _id: company_id, "unities._id": unity_id },
       {
         $pull: {
@@ -164,15 +142,8 @@ class AssetsController {
             _id: asset_id,
           },
         },
-      },
-      (err: any, data: any) => {
-        if (err) {
-          throw new Error(err);
-        }
       }
-    ).clone();
-
-    await Asset.findByIdAndDelete(asset_id);
+    );
 
     return res.json({ message: "Asset deleted" });
   }
