@@ -104,10 +104,13 @@ class AssetsController {
     await Asset.findByIdAndUpdate(asset_id, assetUpdate);
 
     const updatedCompanyAsset = await Company.findOneAndUpdate(
-      { _id: company_id, "unities._id": unity_id, "assets._id": asset_id },
+      { _id: company_id, "assets._id": asset_id },
       {
-        $set: {
-          "unities.$.assets": assetUpdate,
+        unities: {
+          _id: unity_id,
+          $set: {
+            "assets.$": assetUpdate,
+          },
         },
       },
       {
