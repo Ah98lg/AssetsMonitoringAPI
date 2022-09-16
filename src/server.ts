@@ -17,7 +17,7 @@ app.use("/uploads", express.static("./uploads"));
 
 app.use(
   cors({
-    origin: "https://assets-monitoring.herokuapp.com/",
+    origin: "https://assets-monitoring.herokuapp.com",
     credentials: true,
   })
 );
