@@ -4,11 +4,11 @@ import { userSchema } from "../../Users/models/User";
 import ICreateCompanyDTO from "../interface/ICreateCompanyDTO";
 
 const companySchema = new Schema<ICreateCompanyDTO>({
-  companyName: { type: String },
-  companyOwner: { type: String },
-  area: { type: String },
-  country: { type: String },
-  cnpj: { type: String },
+  companyName: String,
+  companyOwner: String,
+  area: String,
+  country: String,
+  cnpj: String,
   unities: [unitySchema],
   users: [userSchema],
 });
