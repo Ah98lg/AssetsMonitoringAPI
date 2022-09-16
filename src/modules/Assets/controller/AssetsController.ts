@@ -107,7 +107,7 @@ class AssetsController {
       { _id: company_id, "unities._id": unity_id, "assets._id": asset_id },
       {
         $set: {
-          "unities.$.assets.$": assetUpdate,
+          "unities.$.assets": assetUpdate,
         },
       },
       {
