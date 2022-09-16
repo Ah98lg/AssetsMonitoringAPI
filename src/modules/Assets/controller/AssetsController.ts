@@ -105,7 +105,7 @@ class AssetsController {
 
     const updatedCompanyAsset = await Company.update(
       { _id: company_id, "unities._id": unity_id, "assets._id": asset_id },
-      { $set: { "assets.$._id": asset_id } },
+      { $set: { "assets.$": { assetUpdate } } },
       { new: true }
     );
 
