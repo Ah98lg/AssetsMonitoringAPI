@@ -15,7 +15,12 @@ app.use(
 
 app.use("/uploads", express.static("./uploads"));
 
-app.use(cors({ origin: "http://myappurl.com", credentials: true }));
+app.use(
+  cors({
+    origin: "https://assets-monitoring.herokuapp.com/",
+    credentials: true,
+  })
+);
 
 mongoose
   .connect(
@@ -24,7 +29,6 @@ mongoose
   .then(() => {
     app.use(express.json());
     app.use(routes);
-    app.use(cors());
     app.listen(parseInt(process.env.PORT || "3333"), () => {
       console.log(
         `Server started on port ${parseInt(process.env.PORT || "3333")}`
