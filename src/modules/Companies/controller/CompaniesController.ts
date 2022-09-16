@@ -11,8 +11,7 @@ interface ICompany {
 class CompaniesController {
   // Create
   async registerNewCompany(req: Request, res: Response): Promise<Response> {
-    const { companyName, companyOwner, area, country, cnpj, unities, users } =
-      req.body;
+    const { companyName, companyOwner, area, country, cnpj } = req.body;
 
     const newCompany = await Company.create({
       companyName,
@@ -20,8 +19,6 @@ class CompaniesController {
       area,
       country,
       cnpj,
-      unities,
-      users,
     });
 
     return res.json(newCompany);
