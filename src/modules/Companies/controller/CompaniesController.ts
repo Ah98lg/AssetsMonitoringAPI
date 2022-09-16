@@ -13,13 +13,15 @@ class CompaniesController {
   async registerNewCompany(req: Request, res: Response): Promise<Response> {
     const { companyName, companyOwner, area, country, cnpj } = req.body;
 
-    const newCompany = await Company.create({
+    const company = {
       companyName,
       companyOwner,
       area,
       country,
       cnpj,
-    });
+    };
+
+    const newCompany = await Company.create(company);
 
     return res.json(newCompany);
   }
