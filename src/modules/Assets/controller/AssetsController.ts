@@ -78,7 +78,7 @@ class AssetsController {
 
   // Update
   async updateAsset(req: Request, res: Response): Promise<Response> {
-    const { company_id, unity_id, asset_id } = req.params;
+    const { company_id, unity_id, asset_id, assetIndex } = req.params;
     const {
       assetName,
       description,
@@ -103,13 +103,13 @@ class AssetsController {
 
     await Asset.findByIdAndUpdate(asset_id, assetUpdate);
 
-    const company = await Company.findOne({ company_id });
+    var query = "unities.$.assets." + [assetIndex];
 
-    const updatedCompanyAsset = await Company.findOneAndUpdate(
-      { "unities._id" : unity_id, "assets._id" : asset_id},
+    const updatedCompanyAsset = await Company.updateOne(
+      { _id: company_id, "unities._id": unity_id },
       {
         $set: {
-          "assets.$": assetUpdate
+          [query]: assetUpdate,
         },
       },
       {

@@ -9,7 +9,7 @@ assetsRouter.delete(
   assetsController.deleteAsset
 );
 assetsRouter.patch(
-  "/:company_id/:unity_id/:asset_id",
+  "/:company_id/:unity_id/:asset_id/:assetIndex",
   assetsController.updateAsset
 );
 assetsRouter.get("/", assetsController.getAll);
