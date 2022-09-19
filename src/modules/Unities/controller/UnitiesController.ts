@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import ICreateAssetDTO from "../../Assets/interface/ICreateAssetDTO";
 import { Company } from "../../Companies/models/Company";
 import { Unity } from "../models/Unity";
 
@@ -6,6 +7,7 @@ interface IUnity {
   unityName?: string;
   city?: string;
   state?: string;
+  assets?: [ICreateAssetDTO];
 }
 class UnitiesController {
   // Create
@@ -50,6 +52,7 @@ class UnitiesController {
       unityName: unityName ?? unity?.unityName,
       city: city ?? unity?.city,
       state: state ?? unity?.state,
+      assets: unity?.assets,
     };
 
     const updatedCompanyUnity = await Company.findOneAndUpdate(
